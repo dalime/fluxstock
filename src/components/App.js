@@ -2,63 +2,42 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import LookupStore from '../stores/LookupStore';
 import UserActions from '../actions/UserActions';
+import SymbolSearch from './SymbolSearch';
+import OneSymbol from './OneSymbol';
 
 export default class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      searchText: "",
-      lookups: []
+      status: "home",
+      detailParam: ""
     }
 
-    this._onChange = this._onChange.bind(this);
-    this.onInputChange = this.onInputChange.bind(this);
-    this.startSearch = this.startSearch.bind(this);
+    this.changeStatus = this.changeStatus.bind(this);
+    this.changeDetail = this.changeDetail.bind(this);
   }
 
-  componentDidMount() {
-    LookupStore.startListening(this._onChange);
+  changeStatus() {
+    this.setState({status: "detail"});
   }
 
-  componentWillUnmount() {
-    LookupStore.stopListening(this._onChange);
-  }
-
-  _onChange() {
-    this.setState({
-      lookups: LookupStore.getLookup(this.state.searchText)
-    })
-  }
-
-  onInputChange(e) {
-    this.setState({searchText: e.target.value});
-  }
-
-  startSearch(e) {
-    e.preventDefault();
-    UserActions.getLookup(this.state.searchText);
-  }
-
-  searchDetail(e) {
-    e.preventDefault();
-    console.log ('e.target.innerText:', e.target.innerText);
+  changeDetail(param) {
+    this.setState({detailParam: param});
   }
 
   render() {
-    let Lis = this.state.lookups.map(lookup => {
-      return <li onClick={this.searchDetail}>{lookup}</li>
-    })
-
-    return (
-      <div>
-        <h1>Flux Stock Tracker</h1>
-        <input type="text" onChange={this.onInputChange}/>
-        <button onClick={this.startSearch}>Search</button>
-        <ul>
-          {Lis}
-        </ul>
-      </div>
-    )
+    switch (this.state.status) {
+      case "home":
+      return (
+        <SymbolSearch changeDetail={this.changeDetail}/>
+      )
+      break;
+      case "detail":
+      return (
+        <OneSymbol details={this.state.detailParam}/>
+      )
+      break;
+    }
   }
 }

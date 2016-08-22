@@ -6,6 +6,12 @@ const ServerActions = {
       type: 'RECEIVE_LOOKUPS',
       lookups
     })
+  },
+  receiveDetails(details) {
+    AppDispatcher.dispatch({
+      type: 'RECEIVE_DETAILS',
+      details
+    })
   }
 }
 

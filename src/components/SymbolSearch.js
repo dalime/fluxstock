@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { render } from 'react-dom';
+import LookupStore from '../stores/LookupStore';
+import UserActions from '../actions/UserActions';
 
 export default class SymbolSearch extends Component {
   constructor() {
@@ -6,31 +9,55 @@ export default class SymbolSearch extends Component {
 
     this.state = {
       searchText: "",
-      search: ""
+      lookups: []
     }
 
+    this._onChange = this._onChange.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
-    this.search = this.search.bind(this);
+    this.startSearch = this.startSearch.bind(this);
+  }
+
+  componentDidMount() {
+    LookupStore.startListening(this._onChange);
+  }
+
+  componentWillUnmount() {
+    LookupStore.stopListening(this._onChange);
+  }
+
+  _onChange() {
+    this.setState({
+      lookups: LookupStore.getLookup(this.state.searchText)
+    })
   }
 
   onInputChange(e) {
     this.setState({searchText: e.target.value});
   }
 
-  search(e) {
+  startSearch(e) {
     e.preventDefault();
-    this.setState({search: this.state.searchText});
+    UserActions.getLookup(this.state.searchText);
+  }
+
+  searchDetail(e) {
+    e.preventDefault();
+    this.props.changeDetail(e.target.innerText);
   }
 
   render() {
+    let Lis = this.state.lookups.map(lookup => {
+      return <li onClick={this.searchDetail}>{lookup}</li>
+    })
+
     return (
       <div>
-        <h1>Search a symbol.</h1>
-        <h6>Please search a symbol below.</h6>
-        <form>
-          <input type="text" onChange={this.onInputChange}/>
-          <button onClick={this.search}>Search</button>
-        </form>
+        <h1>Flux Stock Tracker</h1>
+        <input type="text" onChange={this.onInputChange}/>
+        <button onClick={this.startSearch}>Search</button>
+        <ul>
+          {Lis}
+        </ul>
       </div>
     )
   }

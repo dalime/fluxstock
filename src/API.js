@@ -7,6 +7,12 @@ const API = {
       .then(res => res.data)
       .then(ServerActions.receiveLookups)
       .catch(console.error);
+  },
+  getDetails(text) {
+    axios.get(`/api/details/${text}`)
+      .then(res => res.data)
+      .then(ServerActions.receiveDetails)
+      .catch(console.error);
   }
 }
 
