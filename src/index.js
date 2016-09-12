@@ -14,7 +14,7 @@ render(
 );
 
 
-// This didn't fucking work. Routers my ass
+
 {/* <Route path='/' component={Main}>
 <IndexRoute component={App} />
 <Route path='search' component={SymbolSearch} />
